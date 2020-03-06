@@ -1,8 +1,10 @@
-![Laravel best practices](/images/logo-english.png?raw=true)
+![Laravel-ის საუკეთესო პრაქტიკები](/images/logo-english.png?raw=true)
 
 Translations:
 
 [한국어](https://github.com/xotrs/laravel-best-practices) (by [cherrypick](https://github.com/xotrs))
+
+[English](english.md)
 
 [Русский](russian.md)
 
@@ -11,52 +13,53 @@ Translations:
 [Tiếng Việt](https://chungnguyen.xyz/posts/code-laravel-lam-sao-cho-chuan) (by [Chung Nguyễn](https://github.com/nguyentranchung))
 
 
+ეს არ არის SOLID პრინციპების, პატერნების თუ სხვა დანარჩენის ადაპტაცია Laravel-ისთვის. აქ თავმოყრილია ის, რასაც ხშირ შემთხვევაში, Laravel-ის პროექტებზე მუშაობისას დეველოპერები თავს არიდებენ, თუმცა გამოყენება საუკეთესო შედეგს იძლევა.
 
-It's not a Laravel adaptation of SOLID principles, patterns etc. Here you'll find the best practices which are usually ignored in real life Laravel projects.
+<a name="სარჩევი"></a>
 
-## Contents
+## სარჩევი
 
-[Single responsibility principle](#single-responsibility-principle)
+[ერთი პასუხისმგებლობის პრინციპი (Single responsibility principle)](#ერთი-პასუხისმგებლობის-პრინციპი-(Single-responsibility-principle))
 
-[Fat models, skinny controllers](#fat-models-skinny-controllers)
+[მძიმე მოდელები, მსუბუქი კონტროლერები](#მძიმე-მოდელები,-მსუბუქი-კონტროლერები)
 
-[Validation](#validation)
+[ვალიდაცია](#ვალიდაცია)
 
-[Business logic should be in service class](#business-logic-should-be-in-service-class)
+[ბიზნეს ლოგიკა სერვისის კლასებში](#ბიზნეს-ლოგიკა-სერვისის-კლასებში)
 
-[Don't repeat yourself (DRY)](#dont-repeat-yourself-dry)
+[ნუ გამეორდები (DRY)](#ნუ-გამეორდები-dry)
 
-[Prefer to use Eloquent over using Query Builder and raw SQL queries. Prefer collections over arrays](#prefer-to-use-eloquent-over-using-query-builder-and-raw-sql-queries-prefer-collections-over-arrays)
+[ამჯობინე Eloquent-ის გამოყენება Query Builder-ისა და SQL მოთხოვნებს. ამჯობინე კოლექციები მასივებს](#prefer-to-use-eloquent-over-using-query-builder-and-raw-sql-queries-prefer-collections-over-arrays)
 
-[Mass assignment](#mass-assignment)
+[გამოიყენე მასობრივი შევსება (mass assignment)](#mass-assignment)
 
-[Do not execute queries in Blade templates and use eager loading (N + 1 problem)](#do-not-execute-queries-in-blade-templates-and-use-eager-loading-n--1-problem)
+[არ შეასრულო მოთხოვნები Blade ფაილებში და გამოიყენე სრული ჩატვირთვა (პრობლემა N + 1)](#do-not-execute-queries-in-blade-templates-and-use-eager-loading-n--1-problem)
 
-[Comment your code, but prefer descriptive method and variable names over comments](#comment-your-code-but-prefer-descriptive-method-and-variable-names-over-comments)
+[დაწერე კომენტარები, თუმცა ამჯობინე აღწერილობითი სახელები მეთოდებისთვის და ცვლადებისთვის](#comment-your-code-but-prefer-descriptive-method-and-variable-names-over-comments)
 
-[Do not put JS and CSS in Blade templates and do not put any HTML in PHP classes](#do-not-put-js-and-css-in-blade-templates-and-do-not-put-any-html-in-php-classes)
+[არ გამოიყენო JS და CSS თარგებში (template) და არ გამოიყენო HTML-ი PHP კლასებში](#do-not-put-js-and-css-in-blade-templates-and-do-not-put-any-html-in-php-classes)
 
-[Use config and language files, constants instead of text in the code](#use-config-and-language-files-constants-instead-of-text-in-the-code)
+[კოდში ტექსტის ნაცვლად გამოიყენე კონფიგურაციის და ენების ფაილები, და მუდმივები](#use-config-and-language-files-constants-instead-of-text-in-the-code)
 
-[Use standard Laravel tools accepted by community](#use-standard-laravel-tools-accepted-by-community)
+[გამოიყენე საზოგადოების მიერ მიღებული Laravel-ის ინსტრუმენტები](#use-standard-laravel-tools-accepted-by-community)
 
-[Follow Laravel naming conventions](#follow-laravel-naming-conventions)
+[მიყევი Laravel-ის სახელდების შეთანხმებებს](#follow-laravel-naming-conventions)
 
-[Use shorter and more readable syntax where possible](#use-shorter-and-more-readable-syntax-where-possible)
+[გამოიყენე მოკლე და კითხვადი სინტაქტი, სადაც შესაძლებელია](#use-shorter-and-more-readable-syntax-where-possible)
 
-[Use IoC container or facades instead of new Class](#use-ioc-container-or-facades-instead-of-new-class)
+[გამოიყენე IoC კონტეინერი ან ფასადები new Class-ის ნაცვლად](#use-ioc-container-or-facades-instead-of-new-class)
 
-[Do not get data from the `.env` file directly](#do-not-get-data-from-the-env-file-directly)
+[პირდაპირ ნუ გამოიყენებ მონაცემებს `.env` ფაილიდან](#do-not-get-data-from-the-env-file-directly)
 
-[Store dates in the standard format. Use accessors and mutators to modify date format](#store-dates-in-the-standard-format-use-accessors-and-mutators-to-modify-date-format)
+[შეინახე თარიღები სტანდარტულ ფორმატში. გამოიყენე წამკითხველები და კონვერტორები ფორმატის შესაცვლელელად](#store-dates-in-the-standard-format-use-accessors-and-mutators-to-modify-date-format)
 
-[Other good practices](#other-good-practices)
+[სხვა რჩევები](#other-good-practices)
 
-### **Single responsibility principle**
+### ერთი პასუხისმგებლობის პრინციპი (Single responsibility principle)
 
-A class and a method should have only one responsibility.
+თითოეული კლასი და მეთოდი უნდა ასრულებდეს მხოლოდ ერთ ფუნქციას.
 
-Bad:
+ცუდია:
 
 ```php
 public function getFullNameAttribute()
@@ -69,7 +72,7 @@ public function getFullNameAttribute()
 }
 ```
 
-Good:
+კარგია:
 
 ```php
 public function getFullNameAttribute()
@@ -93,13 +96,13 @@ public function getFullNameShort()
 }
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Fat models, skinny controllers**
+### მძიმე მოდელები, მსუბუქი კონტროლერები
 
-Put all DB related logic into Eloquent models or into Repository classes if you're using Query Builder or raw SQL queries.
+მონაცემთა ბაზასთან დაკავშირებული ყველა ლოგიკა გაიტანე Eloquent მოდელებში, ან რეპოზიტორიის კლასებში თუ იყენებ Query Builder-ს ან მშრალ SQL მოთხოვნებს.
 
-Bad:
+ცუდია:
 
 ```php
 public function index()
@@ -114,7 +117,7 @@ public function index()
 }
 ```
 
-Good:
+კარგია:
 
 ```php
 public function index()
@@ -135,13 +138,13 @@ class Client extends Model
 }
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Validation**
+### ვალიდაცია
 
-Move validation from controllers to Request classes.
+მიყევი მსუბუქი კონტროლერების და SRP პრინციპებს და ვალიდაციები კონტროლერებიდან Request კლასებში გაიტანე
 
-Bad:
+ცუდია:
 
 ```php
 public function store(Request $request)
@@ -156,7 +159,7 @@ public function store(Request $request)
 }
 ```
 
-Good:
+კარგია:
 
 ```php
 public function store(PostRequest $request)
@@ -177,13 +180,13 @@ class PostRequest extends Request
 }
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Business logic should be in service class**
+### ბიზნეს ლოგიკა სერვისის კლასებში
 
-A controller must have only one responsibility, so move business logic from controllers to service classes.
+კონტროლერმა მხოლოდ თავისი პირდაპირი მოვალეობა უნდა შეასრულოს, ამიტომ ბიზნეს ლოგიკა ცალკე კლასებად და სერვის კლასებად გაიტანე.
 
-Bad:
+ცუდია:
 
 ```php
 public function store(Request $request)
@@ -196,7 +199,7 @@ public function store(Request $request)
 }
 ```
 
-Good:
+კარგია:
 
 ```php
 public function store(Request $request)
@@ -217,13 +220,13 @@ class ArticleService
 }
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Don't repeat yourself (DRY)**
+### ნუ გამეორდები (DRY)
 
-Reuse code when you can. SRP is helping you to avoid duplication. Also, reuse Blade templates, use Eloquent scopes etc.
+ხელმეორედ გამოიყენე კოდი, როცა შესაძლებელია. SRP გეხმარება, თავიდან აიცილო დუბლირება. განმეორებით გამოიყენე თარგები, Eloquent მოთხოვნები და ა.შ.
 
-Bad:
+ცუდია:
 
 ```php
 public function getActive()
@@ -239,7 +242,7 @@ public function getArticles()
 }
 ```
 
-Good:
+კარგია:
 
 ```php
 public function scopeActive($q)
@@ -260,13 +263,13 @@ public function getArticles()
 }
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Prefer to use Eloquent over using Query Builder and raw SQL queries. Prefer collections over arrays**
+### ამჯობინე Eloquent-ის გამოყენება Query Builder-ისა და SQL მოთხოვნებს. ამჯობინე კოლექციები მასივებს
 
-Eloquent allows you to write readable and maintainable code. Also, Eloquent has great built-in tools like soft deletes, events, scopes etc.
+Eloquent-ი გაძლევს შესაძლებლობას, წერო მაქსიმალურად წაკითხვადი და სიცოცხლის უნარიანი კოდი. მას ასევე აქვს შესანიშნავი, ჩაშენებული ინსტრუმენტები მსუბუქი წაშლისთვის, ივენთებისთვის, მოთხოვნებისთვის და ა.შ.
 
-Bad:
+ცუდია:
 
 ```sql
 SELECT *
@@ -283,39 +286,39 @@ AND `active` = '1'
 ORDER BY `created_at` DESC
 ```
 
-Good:
+კარგია:
 
 ```php
 Article::has('user.profile')->verified()->latest()->get();
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Mass assignment**
+### გამოიყენე მასობრივი შევსება (mass assignment)
 
-Bad:
+ცუდია:
 
 ```php
 $article = new Article;
 $article->title = $request->title;
 $article->content = $request->content;
 $article->verified = $request->verified;
-// Add category to article
+// დაამატე კატეგორია სტატიას
 $article->category_id = $category->id;
 $article->save();
 ```
 
-Good:
+კარგია:
 
 ```php
 $category->article()->create($request->all());
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Do not execute queries in Blade templates and use eager loading (N + 1 problem)**
+### არ შეასრულო მოთხოვნები Blade ფაილებში და გამოიყენე სრული ჩატვირთვა (პრობლემა N + 1)
 
-Bad (for 100 users, 101 DB queries will be executed):
+Bad (100 მომხმარებლისთვის შესრულდება მონაცემთა მოთხოვნის 101 ბრძანება):
 
 ```php
 @foreach (User::all() as $user)
@@ -323,7 +326,7 @@ Bad (for 100 users, 101 DB queries will be executed):
 @endforeach
 ```
 
-Good (for 100 users, 2 DB queries will be executed):
+Good (100 მომხმარებლისთვის შესრულდება მონაცემთა მოთხოვნის 2 ბრძანება):
 
 ```php
 $users = User::with('profile')->get();
@@ -335,40 +338,40 @@ $users = User::with('profile')->get();
 @endforeach
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Comment your code, but prefer descriptive method and variable names over comments**
+### დაწერე კომენტარები, თუმცა ამჯობინე აღწერილობითი სახელები მეთოდებისთვის და ცვლადებისთვის
 
-Bad:
+ცუდია:
 
 ```php
 if (count((array) $builder->getQuery()->joins) > 0)
 ```
 
-Better:
+უკეთესია:
 
 ```php
-// Determine if there are any joins.
+// განსაზღვრე, არის თუ არა კავშირები.
 if (count((array) $builder->getQuery()->joins) > 0)
 ```
 
-Good:
+კარგია:
 
 ```php
 if ($this->hasJoins())
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Do not put JS and CSS in Blade templates and do not put any HTML in PHP classes**
+### არ გამოიყენო JS და CSS თარგებში (template) და არ გამოიყენო HTML-ი PHP კლასებში
 
-Bad:
+ცუდია:
 
 ```php
 let article = `{{ json_encode($article) }}`;
 ```
 
-Better:
+უკეთესია
 
 ```php
 <input id="article" type="hidden" value="@json($article)">
@@ -386,11 +389,11 @@ let article = $('#article').val();
 
 The best way is to use specialized PHP to JS package to transfer the data.
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Use config and language files, constants instead of text in the code**
+### კოდში ტექსტის ნაცვლად გამოიყენე კონფიგურაციის და ენების ფაილები, და მუდმივები
 
-Bad:
+ცუდია:
 
 ```php
 public function isNormal()
@@ -401,7 +404,7 @@ public function isNormal()
 return back()->with('message', 'Your article has been added!');
 ```
 
-Good:
+კარგია:
 
 ```php
 public function isNormal()
@@ -412,90 +415,91 @@ public function isNormal()
 return back()->with('message', __('app.article_added'));
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Use standard Laravel tools accepted by community**
+### გამოიყენე საზოგადოების მიერ მიღებული Laravel-ის ინსტრუმენტები
 
-Prefer to use built-in Laravel functionality and community packages instead of using 3rd party packages and tools. Any developer who will work with your app in the future will need to learn new tools. Also, chances to get help from the Laravel community are significantly lower when you're using a 3rd party package or tool. Do not make your client pay for that.
+უმჯობესია, გამოიყენო Laravel-ის ჩაშენებული ფუნქციონალი და საზოგადოების მიერ მიღებული პაკეტები, ვიდრე მე-3 მხარის პაკეტები და ინსტრუმენტები. ნებისმიერი დეველოპერი, ვისაც მოუწევს შენს აპლიკაციაზე მუშაობა, მოუწევს ახალი ინსტრუმენტების გამოყენების სწავლა. გარდა ამისა, შანსი, მიიღო დახმარება Laravel-ის საზოგადოებისგან, მნიშვნელოვნად დაბალია, როცა იყენებ მე-3 მხარის პაკეთებსა თუ ინსტრუმენტებს. ნუ აიძულებ დამკვეთს ზედმეტის გადახდას ამ ყველარის გამო.
 
-Task | Standard tools | 3rd party tools
+
+ამოცანა | სტანდარტული ინსტრუმენტი | მე-3 მხარის ინსტრუმენტი
 ------------ | ------------- | -------------
-Authorization | Policies | Entrust, Sentinel and other packages
-Compiling assets | Laravel Mix | Grunt, Gulp, 3rd party packages
-Development Environment | Homestead | Docker
+ავტორიზაცია | Policies | Entrust, Sentinel and other packages
+ასეტების კომპილაცია | Laravel Mix | Grunt, Gulp, 3rd party packages
+სამუშაო გარემო | Homestead | Docker
 Deployment | Laravel Forge | Deployer and other solutions
-Unit testing | PHPUnit, Mockery | Phpspec
-Browser testing | Laravel Dusk | Codeception
-DB | Eloquent | SQL, Doctrine
-Templates | Blade | Twig
-Working with data | Laravel collections | Arrays
-Form validation | Request classes | 3rd party packages, validation in controller
-Authentication | Built-in | 3rd party packages, your own solution
-API authentication | Laravel Passport | 3rd party JWT and OAuth packages
-Creating API | Built-in | Dingo API and similar packages
-Working with DB structure | Migrations | Working with DB structure directly
-Localization | Built-in | 3rd party packages
+იუნიტ ტესტირება | PHPUnit, Mockery | Phpspec
+ბრაუზერ ტესტირება | Laravel Dusk | Codeception
+მონაცემთა ბაზა | Eloquent | SQL, Doctrine
+თარგები | Blade | Twig
+მონაცემებთან მუშაობა | Laravel collections | Arrays
+ფორმების ვალიდაცია | Request classes | 3rd party packages, validation in controller
+აუტენთიფიკაცია | Built-in | 3rd party packages, your own solution
+API აუტენთიფიკაცია | Laravel Passport | 3rd party JWT and OAuth packages
+API-ის შექმა | Built-in | Dingo API and similar packages
+მუშაობა მონაცემთა ბაზების სტრუქტურასთან | Migrations | Working with DB structure directly
+ლოკალიზაცია | Built-in | 3rd party packages
 Realtime user interfaces | Laravel Echo, Pusher | 3rd party packages and working with WebSockets directly
-Generating testing data | Seeder classes, Model Factories, Faker | Creating testing data manually
-Task scheduling | Laravel Task Scheduler | Scripts and 3rd party packages
-DB | MySQL, PostgreSQL, SQLite, SQL Server | MongoDB
+სატესტო მონაცემების გენერირება | Seeder classes, Model Factories, Faker | Creating testing data manually
+ამოცანების დაგეგმვა | Laravel Task Scheduler | Scripts and 3rd party packages
+მონაცემთა ბაზა | MySQL, PostgreSQL, SQLite, SQL Server | MongoDB
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Follow Laravel naming conventions**
+### მიყევი Laravel-ის სახელდების შეთანხმებებს
 
- Follow [PSR standards](http://www.php-fig.org/psr/psr-2/).
+ მიყევი [PSR სტანდარტებს](http://www.php-fig.org/psr/psr-2/).
  
- Also, follow naming conventions accepted by Laravel community:
+ ასევე მიყევი Laravel-ის საზოგადოების მიერ მიღებულ სახელდების შეთანხმებებს:
 
-What | How | Good | Bad
------------- | ------------- | ------------- | -------------
-Controller | singular | ArticleController | ~~ArticlesController~~
-Route | plural | articles/1 | ~~article/1~~
-Named route | snake_case with dot notation | users.show_active | ~~users.show-active, show-active-users~~
-Model | singular | User | ~~Users~~
-hasOne or belongsTo relationship | singular | articleComment | ~~articleComments, article_comment~~
-All other relationships | plural | articleComments | ~~articleComment, article_comments~~
-Table | plural | article_comments | ~~article_comment, articleComments~~
-Pivot table | singular model names in alphabetical order | article_user | ~~user_article, articles_users~~
-Table column | snake_case without model name | meta_title | ~~MetaTitle; article_meta_title~~
-Model property | snake_case | $model->created_at | ~~$model->createdAt~~
-Foreign key | singular model name with _id suffix | article_id | ~~ArticleId, id_article, articles_id~~
-Primary key | - | id | ~~custom_id~~
-Migration | - | 2017_01_01_000000_create_articles_table | ~~2017_01_01_000000_articles~~
-Method | camelCase | getAll | ~~get_all~~
-Method in resource controller | [table](https://laravel.com/docs/master/controllers#resource-controllers) | store | ~~saveArticle~~
-Method in test class | camelCase | testGuestCannotSeeArticle | ~~test_guest_cannot_see_article~~
-Variable | camelCase | $articlesWithAuthor | ~~$articles_with_author~~
-Collection | descriptive, plural | $activeUsers = User::active()->get() | ~~$active, $data~~
-Object | descriptive, singular | $activeUser = User::active()->first() | ~~$users, $obj~~
-Config and language files index | snake_case | articles_enabled | ~~ArticlesEnabled; articles-enabled~~
-View | snake_case | show_filtered.blade.php | ~~showFiltered.blade.php, show-filtered.blade.php~~
-Config | snake_case | google_calendar.php | ~~googleCalendar.php, google-calendar.php~~
-Contract (interface) | adjective or noun | Authenticatable | ~~AuthenticationInterface, IAuthentication~~
-Trait | adjective | Notifiable | ~~NotificationTrait~~
+| რა | როგორ | კარგი | ცუდი |
+| ------------ | ------------- | ------------- | ------------- |
+| Controller | მხოლობითი | ArticleController | ~~ArticlesController~~ |
+| Route | მრავლობითი | articles/1 | ~~article/1~~ |
+| Named route | snake\_case წერტილიანი ნოტაციით | users.show_active | ~~users.show-active, show-active-users~~ |
+| Model | მხოლობითი | User | ~~Users~~ |
+| hasOne or belongsTo relationship | მხოლობითი | articleComment | ~~articleComments, article_comment~~ |
+| All other relationships | მრავლობითი | articleComments | ~~articleComment, article_comments~~ |
+| Table | მრავლობითი | article\_comments | ~~article_comment, articleComments~~ |
+| Pivot table | მხოლობითი მოდელის სახელები ანბანური თანმიმდევრობით | article\_user | ~~user\_article, articles\_users~~ |
+| Table column | snake\_case მოდელის სახელის გარეშე | meta\_title | ~~MetaTitle; article\_meta\_title~~ |
+| Model property | snake\_case | $model->created\_at | ~~$model->createdAt~~ |
+| Foreign key | მხოლობითი მოდელის სახელი \_id-ის სუფიქსით | article\_id | ~~ArticleId, id\_article, articles\_id~~ |
+| Primary key | - | id | ~~custom\_id~~ |
+| Migration | - | 2017\_01\_01\_000000\_create\_articles\_table | ~~2017\_01\_01\_000000\_articles~~ |
+| Method | camelCase | getAll | ~~get\_all~~ |
+| Method in resource controller | [ცხრილი](https://laravel.com/docs/master/controllers#resource-controllers) | store | ~~saveArticle~~ |
+| Method in test class | camelCase | testGuestCannotSeeArticle | ~~test\_guest\_cannot\_see\_article~~ |
+| Variable | camelCase | $articlesWithAuthor | ~~$articles\_with\_author~~ |
+| Collection | აღწერილობითი, მრავლობითი | $activeUsers = User::active()->get() | ~~$active, $data~~ |
+| Object | აღწერილობითი, მხოლობითი | $activeUser = User::active()->first() | ~~$users, $obj~~ |
+| Config and language files index | snake\_case | articles\_enabled | ~~ArticlesEnabled; articles-enabled~~ |
+| View | snake\_case | show\_filtered.blade.php | ~~showFiltered.blade.php, show-filtered.blade.php~~ |
+| Config | snake\_case | google\_calendar.php | ~~googleCalendar.php, google-calendar.php~~ |
+| Contract (interface) | ზედსართვი ან არსებითი სახელი | Authenticatable | ~~AuthenticationInterface, IAuthentication~~ |
+| Trait | ზედსართვი სახელი | Notifiable | ~~NotificationTrait~~ |
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Use shorter and more readable syntax where possible**
+### გამოიყენე მოკლე და კითხვადი სინტაქტი, სადაც შესაძლებელია
 
-Bad:
+ცუდია:
 
 ```php
 $request->session()->get('cart');
 $request->input('name');
 ```
 
-Good:
+კარგია:
 
 ```php
 session('cart');
 $request->name;
 ```
 
-More examples:
+მეტი მაგალითები:
 
-Common syntax | Shorter and more readable syntax
+ზოგადი სინტაქსი | უფრო მოკლე და კითხვადი სინტაქსი
 ------------ | -------------
 `Session::get('cart')` | `session('cart')`
 `$request->session()->get('cart')` | `session('cart')`
@@ -514,20 +518,21 @@ Common syntax | Shorter and more readable syntax
 `->select('id', 'name')->get()` | `->get(['id', 'name'])`
 `->first()->name` | `->value('name')`
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Use IoC container or facades instead of new Class**
+### გამოიყენე IoC კონტეინერი ან ფასადები new Class-ის ნაცვლად
 
-new Class syntax creates tight coupling between classes and complicates testing. Use IoC container or facades instead.
 
-Bad:
+new Class სინტაქსი ქმნის მჭიდრო კავშირს კლასებს შორის და ართულებს ტესტირებას. გამოიყენე  IoC კონტეინერი ან ფასადები.
+
+ცუდია:
 
 ```php
 $user = new User;
 $user->create($request->all());
 ```
 
-Good:
+კარგია:
 
 ```php
 public function __construct(User $user)
@@ -540,60 +545,60 @@ public function __construct(User $user)
 $this->user->create($request->all());
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Do not get data from the `.env` file directly**
+### პირდაპირ ნუ გამოიყენებ მონაცემებს .env ფაილიდან
 
-Pass the data to config files instead and then use the `config()` helper function to use the data in an application.
+გადაეცი მონაცემები კონფიგურაციის ფაილებს და გამოიყენე `config()` დამხმარე ფუნქცია ამ მონაცემებით სარგებლობისათვის.
 
-Bad:
+ცუდია:
 
 ```php
 $apiKey = env('API_KEY');
 ```
 
-Good:
+კარგია:
 
 ```php
 // config/api.php
 'key' => env('API_KEY'),
 
-// Use the data
+// გამოიყენე მონაცემები
 $apiKey = config('api.key');
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Store dates in the standard format. Use accessors and mutators to modify date format**
+### შეინახე თარიღები სტანდარტულ ფორმატში. გამოიყენე წამკითხველები და კონვერტორები ფორმატის შესაცვლელელად
 
-Bad:
+ცუდია:
 
 ```php
 {{ Carbon::createFromFormat('Y-d-m H-i', $object->ordered_at)->toDateString() }}
 {{ Carbon::createFromFormat('Y-d-m H-i', $object->ordered_at)->format('m-d') }}
 ```
 
-Good:
+კარგია:
 
 ```php
-// Model
+// მოდელი
 protected $dates = ['ordered_at', 'created_at', 'updated_at']
 public function getSomeDateAttribute($date)
 {
     return $date->format('m-d');
 }
 
-// View
+// თარგი
 {{ $object->ordered_at->toDateString() }}
 {{ $object->ordered_at->some_date }}
 ```
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
 
-### **Other good practices**
+### სხვა რჩევები
 
-Never put any logic in routes files.
+არასდროს ჩატენო ლოგიკა მარშრუტის ფაილებში.
 
-Minimize usage of vanilla PHP in Blade templates.
+მინიმუმამდე დაიყვანე მშრალი PHP-ის გამოყენება თარგის ფაილებში.
 
-[🔝 Back to contents](#contents)
+[🔝 სარჩევი](#სარჩევი)
